@@ -1,0 +1,144 @@
+```{r}
+#------------------------------
+# Importing--------------------
+#------------------------------
+r=read.csv("C:\\Users\\user\\Desktop\\tRAINING\\GData.csv",header=T)
+r
+head(r)
+names(r)
+#------------------------------
+# Mean, Median,Quartiles
+#------------------------------
+summary(r)
+
+#--------------------------------------------------
+# Standard deviation, variance and standard error
+#--------------------------------------------------
+std=seq(1,3,1)
+varr=seq(1,3,1)
+stder=seq(1,3,1)
+cv=seq(1,3,1)
+for(i in 1:3)
+{
+  std[i]=sd(r[,i+1])
+  varr[i]=var(r[,i+1])
+  stder[i]=sd(r[,i+1])/length(r[,i+1])  
+  cv[i]=(std[i]/mean(r[,i+1]))*100
+}
+library(ggplot2)
+data.frame(std,varr,stder,cv)
+#--------------------------
+#Scatterplot
+#--------------------------
+library(car)
+scatterplot(r$Services,r$Goods)
+
+
+
+#--------------------------
+#Confidence interval
+#--------------------------
+ul=seq(1,3,1)
+ll=seq(1,3,1)
+per=matrix(nrow=3,ncol=3)
+for(i in 1:3)
+{
+  v=r[,i+1]
+  for(j in 1:3)
+  {
+    per[i,j]=sum(ifelse(v<mean(v)+(j*sd(v))&v>mean(v)-(j*sd(v)),1,0))/length(r[,i+1])*100    
+  }
+  
+}
+per
+name=names(r)
+a=c("1sd","2sd","3sd")
+
+x=data.frame(a,per)
+x
+x
+#------------------------------
+#Percentile and quantiles
+#------------------------------
+q=seq(1,100,1)
+for(i in 1:100)
+{
+  q[i]=quantile(r$Total,0.01*i)
+}
+q
+
+#--------------------------------
+#  Box plot----------------------
+#--------------------------------
+par(mfrow=c(1,3))
+boxplot(r$Total,main="Total")
+boxplot(r$Goods,main="Goods")
+boxplot(r$Services,main="Services")
+#--------------------------------
+#Correlation---------------------
+#--------------------------------
+par(mfrow=c(1,1))
+library(corrgram)
+corrgram(r[,2:4])
+cor(r[,2:4])
+cov(r[,2:4])
+#--------------------------------
+# Histogram----------------------
+#--------------------------------
+rang=max(r$Total)-min(r$Total)
+wid=rang/8
+wid
+par(mfrow=c(1,3))
+hist(r$Total,main="Totals",col="lightpink3")
+hist(r$Goods,main="Goods",col="darkseagreen3")
+hist(r$Services,main="Dervices",col="cadetblue3")
+x=r$Goods
+h=hist(r$Goods,main="Goods",col="Salmon3")
+xfit=seq(min(x),max(x),wid)
+yfit=dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit=yfit*diff(h$mids[1:2])*length(x)
+lines(xfit,yfit,lwd=3,col="steelblue4")
+#--------------------------------
+# QQ plot
+#--------------------------------
+par(mfrow=c(1,3))
+qqnorm(r$Total,main="Total")
+qqnorm(r$Goods,main="Goods")
+qqnorm(r$Services,main="Services")
+
+#--------------------------------
+#Ogives--------------------------
+#--------------------------------
+rang=max(r$Total)-min(r$Total)
+wid=rang/8
+wid
+sew=seq(50044,92424,wid)
+freq=seq(1,8,1)
+mini=min(r$Goods)
+for(i in 1:8)
+{
+    freq[i]=sum(ifelse(r$Goods>mini+((i-1)*wid-1) & r$Goods<=mini+(i*wid),1,0))
+}
+cer= cumsum(freq)
+par(new=TRUE)
+h=hist(r$Goods,main="Goods",breaks=7,col="Grey")
+par(new=TRUE)
+plot(cer)
+lines(cer)
+
+#----------------------------
+# Standardizing the variables
+#------------------------------
+
+z=(r[,3]-mean(r[,3]))/sd(r[,3])
+summary(z)
+sd(z)
+
+#------------------------------
+#Random number generation
+#------------------------------
+runif(100)
+
+
+```
+
